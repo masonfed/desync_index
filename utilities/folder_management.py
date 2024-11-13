@@ -1,7 +1,6 @@
 from utilities.data_folder import input_data_folder, raw_data_folder, output_data_folder
 
 
-
 def get_output_folder(dataset: str):
 
     dataset_folder = output_data_folder + dataset + '/' 

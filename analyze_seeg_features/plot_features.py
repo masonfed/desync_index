@@ -3,11 +3,9 @@ from analyze_seeg_features.plot_functions.plot_seeg_energy import plot_seeg_ener
 from analyze_seeg_features.plot_functions.plot_seeg_connection import plot_seeg_connection
 from analyze_seeg_features.plot_functions.plot_seeg_connection_alarm import plot_seeg_connection_alarm
 from analyze_seeg_features.plot_functions.plot_seeg_channel import plot_seeg_channel
-from analyze_seeg_features.plot_functions.plot_seeg_sync_epindex import plot_seeg_sync_epindex
 from analyze_seeg_features.plot_functions.plot_seeg_desync_epindex import plot_seeg_desync_epindex
 from analyze_seeg_features.plot_functions.plot_seeg_graph import plot_seeg_graph
 from analyze_seeg_features.plot_functions.plot_seeg_bartolomei_epindex import plot_seeg_bartolomei_epindex
-from analyze_seeg_features.plot_functions.plot_seeg_fusion_epindex import plot_seeg_fusion_epindex
 from analyze_seeg_features.multi_plot_functions.multi_plot_seeg_bartolomei_epindex import multi_plot_seeg_bartolomei_epindex
 from analyze_seeg_features.multi_plot_functions.multi_plot_seeg_connection_alarm import multi_plot_seeg_connection_alarm
 from analyze_seeg_features.multi_plot_functions.multi_plot_seeg_energy import multi_plot_seeg_energy
@@ -58,13 +56,11 @@ def multi_plot_seeg_features(multi_legend: list,
                              multi_time_duration: list,
                              plot_connection: bool,
                              plot_channel: bool,
-                             plot_connection_alarm: bool,
-                             plot_sync_epindex: bool,                             
+                             plot_connection_alarm: bool,                         
                              plot_desync_epindex: bool,
                              plot_graph: bool,
                              plot_energy: bool,
                              plot_bartolomei_epindex: bool,
-                             plot_fusion_epindex: bool,
                              compare_statistic: bool, 
                              max_plot_num: int,
                              plot_montage: str):
@@ -144,8 +140,6 @@ def multi_plot_seeg_features(multi_legend: list,
         for window_folder, connection_technique, connection_bin_rule, connection_lag, connection_lag_num in zip(multi_window_folder, multi_connection_technique, multi_connection_bin_rule, multi_connection_lag, multi_connection_lag_num)]          
     multi_connection_alarm_folder = [get_connection_alarm_folder(connection_folder, alarm_smooth, alarm_baseline, alarm_low_percent, alarm_high_percent)\
         for connection_folder, alarm_smooth, alarm_baseline, alarm_low_percent, alarm_high_percent in zip(multi_connection_folder, multi_alarm_smooth, multi_alarm_baseline, multi_alarm_low_percent, multi_alarm_high_percent)]
-    multi_sync_epindex_folder = [get_epindex_folder(connection_alarm_folder, epindex_base, epindex_start, epindex_end, epindex_bias, epindex_threshold, epindex_decay, epindex_tonicity) + 'sync/'\
-        for connection_alarm_folder, epindex_base, epindex_start, epindex_end, epindex_bias, epindex_threshold, epindex_decay, epindex_tonicity in zip(multi_connection_alarm_folder, multi_epindex_base, multi_epindex_start, multi_epindex_end, multi_epindex_bias, multi_epindex_threshold, multi_epindex_decay, multi_epindex_tonicity)]   
     multi_desync_epindex_folder = [get_epindex_folder(connection_alarm_folder, epindex_base, epindex_start, epindex_end, epindex_bias, epindex_threshold, epindex_decay, epindex_tonicity) + 'desync/'\
         for connection_alarm_folder, epindex_base, epindex_start, epindex_end, epindex_bias, epindex_threshold, epindex_decay, epindex_tonicity in zip(multi_connection_alarm_folder, multi_epindex_base, multi_epindex_start, multi_epindex_end, multi_epindex_bias, multi_epindex_threshold, multi_epindex_decay, multi_epindex_tonicity)]   
     multi_graph_folder = [get_graph_folder(connection_folder, graph_start, graph_base, graph_min, graph_max)\
@@ -308,12 +302,10 @@ def plot_seeg_features(patient: str,
                        plot_connection: bool,
                        plot_channel: bool,
                        plot_connection_alarm: bool,
-                       plot_sync_epindex: bool,
                        plot_desync_epindex: bool,
                        plot_graph: bool,
                        plot_energy: bool,
                        plot_bartolomei_epindex: bool,
-                       plot_fusion_epindex: bool,
                        max_plot_num: int,
                        plot_montage: str):
     
@@ -334,10 +326,7 @@ def plot_seeg_features(patient: str,
                                               connection_lag, connection_lag_num)  
     
     connection_alarm_folder = get_connection_alarm_folder(connection_folder, alarm_smooth, alarm_baseline,
-                                                          alarm_low_percent, alarm_high_percent) 
-    
-    sync_epindex_folder = get_epindex_folder(connection_alarm_folder, epindex_base, epindex_start, epindex_end, epindex_bias,
-                                             epindex_threshold, epindex_decay, epindex_tonicity) + 'sync/'
+                                                          alarm_low_percent, alarm_high_percent)
     
     desync_epindex_folder = get_epindex_folder(connection_alarm_folder, epindex_base, epindex_start, epindex_end, epindex_bias,
                                                epindex_threshold, epindex_decay, epindex_tonicity) + 'desync/'
@@ -350,9 +339,6 @@ def plot_seeg_features(patient: str,
                                                    epindex_threshold, epindex_decay, epindex_tonicity)
     
     connection_energy_folder = get_energy_folder(connection_alarm_folder, energy_low_freqs, energy_high_freqs)
-    
-    fusion_epindex_folder = get_epindex_folder(connection_energy_folder, epindex_base, epindex_start, epindex_end, epindex_bias,
-                                               epindex_threshold, epindex_decay, epindex_tonicity)
 
     work_signal, work_channels, sampling_frequency =\
         load_work_signal('seeg',
@@ -407,23 +393,6 @@ def plot_seeg_features(patient: str,
                                    time_duration,
                                    max_plot_num,
                                    plot_montage)
-        
-        
-    if plot_sync_epindex:
-        
-        plot_seeg_sync_epindex(connection_folder,
-                               connection_alarm_folder,
-                               sync_epindex_folder,
-                               patient,
-                               work_signal,
-                               work_channels,
-                               sampling_frequency,
-                               epindex_start,
-                               epindex_base,
-                               time_start,
-                               time_duration,
-                               max_plot_num,
-                               plot_montage)
         
     if plot_desync_epindex:
         
@@ -485,17 +454,3 @@ def plot_seeg_features(patient: str,
                                      time_duration,      
                                      max_plot_num,
                                      plot_montage)
-        
-    if plot_fusion_epindex:
-        
-        plot_seeg_fusion_epindex(fusion_epindex_folder,
-                                 patient,
-                                 work_signal,
-                                 work_channels,
-                                 sampling_frequency,
-                                 epindex_start,
-                                 epindex_base,
-                                 time_start,
-                                 time_duration,      
-                                 max_plot_num,
-                                 plot_montage)  

@@ -242,10 +242,8 @@ def compute_channel_digital_phases(phase_folder: str,
             
             window -= np.median(window)
             
-            fft_window = np.fft.fft(window)
             hilb_window = scipy.signal.hilbert(window)
             
-            initial_window_phases = np.angle(fft_window)
             instant_window_phases = np.angle(hilb_window)
             
             if bin_rule != 'sturges':
